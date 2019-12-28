@@ -84,6 +84,7 @@ class ZooClient implements Watcher {
         zoo.create("/servers/s", serverUrl.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
     }
 
+    //вызывается каждый раз при изменении состояния zoo (обновляется список серверов)
     @Override
     public void process(WatchedEvent watchedEvent) {
         try {
