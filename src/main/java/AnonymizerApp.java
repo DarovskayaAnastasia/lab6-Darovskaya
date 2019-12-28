@@ -27,14 +27,14 @@ public class AnonymizerApp {
 
     public static void main(String[] args) throws IOException {
 
-        ActorSystem system = ActorSystem.create("routes", /*ActorSystemSetup.empty()*/);
+        ActorSystem system = ActorSystem.create("routes"/*, ActorSystemSetup.empty()*/);
 
         final Http http = Http.get(context().system());
 
         final ActorMaterializer materializer = ActorMaterializer.create(system);
         ActorRef configurationActor = system.actorOf(ConfigurationKeeperActor.props(), "configurationActor");
 
-        Patterns.ask(configurationActor, new ConfigurationKeeperActor(), Duration.ofMillis(2000L)).thenCompose("" -> fetch(Uri.create(serverUrl)
+        Patterns.ask(configurationActor, new ConfigurationKeeperActor(), Duration.ofMillis(2000L)).thenCompose(url -> fetch(Uri.create("http://localhost:" + port)
                 .query(Query.create(
                         Pair.create(URL_PARAM_NAME, queryUrl),
                         Pair.create(COUNT_PARAM_NAME, Integer.toString(count - 1))
