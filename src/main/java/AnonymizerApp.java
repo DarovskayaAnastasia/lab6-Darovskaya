@@ -3,6 +3,7 @@ import akka.actor.ActorSystem;
 import akka.actor.setup.ActorSystemSetup;
 import akka.http.javadsl.Http;
 import akka.http.javadsl.model.HttpRequest;
+import akka.pattern.Patterns;
 import akka.stream.ActorMaterializer;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.Watcher;
@@ -11,6 +12,7 @@ import org.apache.zookeeper.ZooKeeper;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
@@ -27,7 +29,7 @@ public class AnonymizerApp {
         final ActorMaterializer materializer = ActorMaterializer.create(system);
         ActorRef configurationActor = system.actorOf(ConfigurationKeeperActor.props(), "configurationActor");
 
-        
+        Patterns.ask(configurationActor, new ConfigurationKeeperActor("localhost:8008"), Duration.ofMillis(2000L));
 
         CompletionStage<HttpResponse> fetch(String url) {
             return http.singleRequest(HttpRequest.create(url));
