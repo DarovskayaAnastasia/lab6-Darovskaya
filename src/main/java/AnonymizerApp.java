@@ -1,11 +1,19 @@
+import akka.actor.ActorSystem;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 
+import java.io.IOException;
 import java.util.List;
 
 public class AnonymizerApp {
+
+    public static void main(String[] args) throws IOException {
+
+        ActorSystem system = ActorSystem.create("")
+    }
+}
 
     ZooKeeper(String connectString,
               int sessionTimeout,
@@ -19,6 +27,5 @@ for(
 
     {
         byte[] data = zoo.getData("/servers/" + s, false, null);
-        System.out.println("server " + s + " data=" + new String(data));
-    }
+        System.out.println("server " + s + " data=" + new String(data
 }
