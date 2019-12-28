@@ -9,10 +9,7 @@ import akka.pattern.Patterns;
 import akka.stream.ActorMaterializer;
 import akka.http.javadsl.ServerBinding;
 import akka.stream.javadsl.Flow;
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooDefs;
-import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.*;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
@@ -68,11 +65,17 @@ class Server extends AllDirectives {
     private ActorRef configurationActor;
     private int port;
 
-    public Server(final Http http, ActorRef configurationActor) throws IOException {
+    public Server(final Http http, ActorRef configurationActor) throws IOException, KeeperException, InterruptedException {
         this.http = http;
         this.configurationActor = configurationActor;
 
         ZooKeeper zookeeper = new ZooKeeper(ZOOKEEPER_SERVER_URL, 2000, null);
-        zookeeper.create("/servers/s", "http://localhost:" + port);
+        zookeeper.create("/servers/s", ("http://localhost:" + port).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+
+        List<String> servers = zoo.getChildren("/servers", this);
+        for (
+                String s : servers) {
+            byte[] data = zoo.getData("/servers/" + s, false, null);
+            System.out.println("server " + s + " data=" + new String(data
+        }
     }
-}
