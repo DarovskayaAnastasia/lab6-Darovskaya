@@ -96,7 +96,7 @@ class ZooClient implements Watcher {
                 servers.add(new String(data));
             }
 
-            configurationActor.tell(new ServerListMessage(servers.toArray(new String[0])), ActorRef.noSender());
+            configurationActor.tell(new ServerListMessage(servers.toArray(new String[1])), ActorRef.noSender());
         } catch (KeeperException | InterruptedException e) {
             e.printStackTrace();
         }
