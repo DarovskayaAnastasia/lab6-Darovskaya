@@ -57,6 +57,8 @@ public class AnonymizerApp {
         System.out.println("Server started on port: " + port);
         System.in.read();
         binding
+                .thenCompose(ServerBinding::unbind)
+                .thenAccept(unbound -> system.terminate());
 
     }
 
