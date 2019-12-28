@@ -1,4 +1,5 @@
 import akka.actor.AbstractActor;
+import akka.actor.Props;
 import akka.japi.pf.ReceiveBuilder;
 
 import java.util.Random;
@@ -14,5 +15,9 @@ public class ConfigurationKeeperActor extends AbstractActor {
         }).
                 match(RandomServerRequestMessage.class, msg -> sender().tell(new Random().nextInt(servers.length), self())
                 ).build();
+    }
+
+    public static Props props() {
+        return Props.create(ConfigurationKeeperActor.class);
     }
 }
