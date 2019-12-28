@@ -13,11 +13,15 @@ public class ConfigurationKeeperActor extends AbstractActor {
         return ReceiveBuilder.create().match(ServerListMessage.class, msg -> {
             servers = msg.getServerList();
         }).
-                match(RandomServerRequestMessage.class, msg -> sender().tell(servers[new Random().nextInt(servers.length)], self())
+                match(RandomServerRequestMessage.class, msg -> sender().tell(newServer(), self())
                 ).build();
     }
 
     public static Props props() {
         return Props.create(ConfigurationKeeperActor.class);
+    }
+
+    private String newServer() {
+        return servers[new Random().nextInt(servers.length)];
     }
 }
