@@ -76,7 +76,7 @@ class ZooClient implements Watcher {
 //        this.http = http;
 
         this.configurationActor = configurationActor;
-        this.zoo = new ZooKeeper(ZOOKEEPER_SERVER_URL, 3000, this);
+        this.zoo = new ZooKeeper(ZOOKEEPER_SERVER_URL, 3000, this); //watcher - сallback для обработки событий, относящихся к сессии
 
     }
 
