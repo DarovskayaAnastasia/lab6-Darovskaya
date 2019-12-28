@@ -30,10 +30,14 @@ public class AnonymizerApp {
 
         System.out.println("start!");
 
-        int port = 8001;
+        int port;
         String host = "localhost";
         if(args.length > 0){
             host = args[0];
+        }
+        else {
+            System.err.println("error");
+            return;
         }
         if (args.length > 1){
             port = Integer.parseInt(args[1]);
