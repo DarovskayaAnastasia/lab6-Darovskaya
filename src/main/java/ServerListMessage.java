@@ -3,7 +3,7 @@ public class ServerListMessage {
     private final String[] serverList;
 
     public ServerListMessage() {
-        serverList = NULL;
+        serverList = null;
     }
 
     public ServerListMessage(String[] serverList) {
