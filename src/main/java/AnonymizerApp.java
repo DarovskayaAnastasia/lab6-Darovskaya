@@ -60,41 +60,41 @@ public class AnonymizerApp {
 //        System.out.println("server "+s+" data="+new String(data
 
 
-class Server extends AllDirectives {
+class Server implements Watcher {
     private static final String ZOOKEEPER_SERVER_URL = "127.0.0.1:2181";
+
     private Http http;
     private ActorRef configurationActor;
     private int port;
-    ZooKeeper zoo = new ZooKeeper(ZOOKEEPER_SERVER_URL, 2000, null);
+    private ZooKeeper zoo;
 
-    public Server(final Http http, ActorRef configurationActor) throws IOException, KeeperException, InterruptedException {
+    public Server(final Http http, ActorRef configurationActor) throws IOException {
         this.http = http;
         this.configurationActor = configurationActor;
 
-//        ZooKeeper zoo = new ZooKeeper(ZOOKEEPER_SERVER_URL, 2000, null);
-        String s = zoo.create("/servers/s", ("http://localhost:" + port).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
-
-        watchServers();
+        this.zoo = new ZooKeeper(ZOOKEEPER_SERVER_URL, 2000, null);
     }
 
-    private void watchServers() throws KeeperException, InterruptedException {
-        List<String> serverNodes = zoo.getChildren("/servers", watcher -> {
-            if (watcher.getType() == Watcher.Event.EventType.NodeChildrenChanged) {
-                try {
-                    watchServers();
-                } catch (KeeperException | InterruptedException e) {
-                    e.printStackTrace();
-                }
+    public void creaeteServer() throws KeeperException, InterruptedException {
+        String s = zoo.create("/servers/s", ("http://localhost:" + port).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+    }
+
+    @Override
+    public void process(WatchedEvent watchedEvent) {
+        try {
+            List<String> serverNodes = zoo.getChildren("/servers", this);
+
+            List<String> servers = new ArrayList<>();
+            for (String s : serverNodes) {
+                byte[] data = zoo.getData("/servers/" + s, false, null);
+                System.out.println("server " + s + " data=" + new String(data));
+                servers.add(new String(data));
             }
-        });
 
-        List<String> servers = new ArrayList<>();
-        for (String s : serverNodes) {
-            byte[] data = zoo.getData("/servers/" + s, false, null);
-            System.out.println("server " + s + " data=" + new String(data));
-            servers.add(new String(data));
+            configurationActor.tell(new ServerListMessage(servers.toArray(new String[0])), ActorRef.noSender());
         }
-
-        
+        catch (KeeperException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
