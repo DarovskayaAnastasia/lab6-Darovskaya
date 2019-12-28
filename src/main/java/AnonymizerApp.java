@@ -69,12 +69,13 @@ class Server extends AllDirectives {
         this.http = http;
         this.configurationActor = configurationActor;
 
-        ZooKeeper zookeeper = new ZooKeeper(ZOOKEEPER_SERVER_URL, 2000, null);
-        zookeeper.create("/servers/s", ("http://localhost:" + port).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+        ZooKeeper zoo = new ZooKeeper(ZOOKEEPER_SERVER_URL, 2000, null);
+        zoo.create("/servers/s", ("http://localhost:" + port).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
 
         List<String> servers = zoo.getChildren("/servers", this);
         for (String s : servers) {
             byte[] data = zoo.getData("/servers/" + s, false, null);
-            System.out.println("server " + s + " data=" + new String(data
+            System.out.println("server " + s + " data=" + new String(data));
         }
     }
+}
