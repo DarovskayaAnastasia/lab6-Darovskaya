@@ -46,7 +46,7 @@ public class AnonymizerApp {
         final Http http = Http.get(system);
 
         final ActorMaterializer materializer = ActorMaterializer.create(system);
-        ActorRef configurationActor = system.actorOf(ConfigurationKeeperActor.props(), "configurationActor");
+//        ActorRef configurationActor = system.actorOf(ConfigurationKeeperActor.props(), "configurationActor");
 
 
         HttpServer server = new HttpServer(http, configurationActor, port);
