@@ -1,22 +1,22 @@
 import akka.NotUsed;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import akka.actor.setup.ActorSystemSetup;
+import akka.http.javadsl.ConnectHttp;
 import akka.http.javadsl.Http;
 import akka.http.javadsl.model.HttpRequest;
+import akka.http.javadsl.model.HttpResponse;
 import akka.http.javadsl.model.Query;
 import akka.http.javadsl.model.Uri;
 import akka.http.javadsl.server.AllDirectives;
 import akka.http.javadsl.server.Route;
+import akka.japi.Pair;
 import akka.pattern.Patterns;
 import akka.stream.ActorMaterializer;
 import akka.http.javadsl.ServerBinding;
 import akka.stream.javadsl.Flow;
-import jdk.internal.vm.compiler.collections.Pair;
 import org.apache.zookeeper.*;
 
 import java.io.IOException;
-import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +25,9 @@ import java.util.concurrent.CompletionStage;
 import static akka.actor.TypedActor.context;
 
 public class AnonymizerApp {
+int port = 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
 
         ActorSystem system = ActorSystem.create("routes"/*, ActorSystemSetup.empty()*/);
 
@@ -36,10 +37,15 @@ public class AnonymizerApp {
         ActorRef configurationActor = system.actorOf(ConfigurationKeeperActor.props(), "configurationActor");
 
 
-        HttpServer server = new HttpServer(http, configurationActor, 8008);
+        HttpServer server = new HttpServer(http, configurationActor, port);
 
         final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = server.createRoute().flow(system, materializer);
 
+        final CompletionStage<ServerBinding> binding = http.bindAndHandle(routeFlow, ConnectHttp.toHost("localhost", port), materializer);
+
+        System.out.println("Server started on port: " + port);
+        System.in.read();
+        binding
 
     }
 
@@ -110,11 +116,11 @@ class HttpServer extends AllDirectives {
         return get(() ->
                 parameter("url", url ->
                         parameter("count", count -> {
-                            int count = Integer.parseInt(count);
+                            int c = Integer.parseInt(count);
 
-                            return count == 0 ?
+                            return c == 0 ?
                                     completeWithFuture(fetch(url)) :
-                                    completeWithFuture(redirectToServer(url, count));
+                                    completeWithFuture(redirectToServer(url, c));
                         })
                 )
         );
