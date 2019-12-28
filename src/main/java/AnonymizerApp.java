@@ -1,3 +1,4 @@
+import akka.NotUsed;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.setup.ActorSystemSetup;
@@ -5,6 +6,8 @@ import akka.http.javadsl.Http;
 import akka.http.javadsl.model.HttpRequest;
 import akka.pattern.Patterns;
 import akka.stream.ActorMaterializer;
+import akka.stream.Server;
+import akka.stream.javadsl.Flow;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs;
@@ -22,14 +25,19 @@ public class AnonymizerApp {
 
     public static void main(String[] args) throws IOException {
 
-        ActorSystem system = ActorSystem.create("routes", ActorSystemSetup.empty());
+        ActorSystem system = ActorSystem.create("routes", /*ActorSystemSetup.empty()*/);
 
         final Http http = Http.get(context().system());
 
         final ActorMaterializer materializer = ActorMaterializer.create(system);
         ActorRef configurationActor = system.actorOf(ConfigurationKeeperActor.props(), "configurationActor");
 
-        Patterns.ask(configurationActor, new ConfigurationKeeperActor("localhost:8008"), Duration.ofMillis(2000L));
+//        Patterns.ask(configurationActor, new ConfigurationKeeperActor("localhost:8008"), Duration.ofMillis(2000L));
+
+        Server server = new Server(http, 8008, configurationActor);
+
+        final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = server.createRoute().flow(system, materializer);
+
 
         CompletionStage<HttpResponse> fetch(String url) {
             return http.singleRequest(HttpRequest.create(url));
