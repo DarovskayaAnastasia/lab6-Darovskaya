@@ -14,6 +14,7 @@ import org.apache.zookeeper.*;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
@@ -64,22 +65,36 @@ class Server extends AllDirectives {
     private Http http;
     private ActorRef configurationActor;
     private int port;
+    ZooKeeper zoo = new ZooKeeper(ZOOKEEPER_SERVER_URL, 2000, null);
 
     public Server(final Http http, ActorRef configurationActor) throws IOException, KeeperException, InterruptedException {
         this.http = http;
         this.configurationActor = configurationActor;
 
-        ZooKeeper zoo = new ZooKeeper(ZOOKEEPER_SERVER_URL, 2000, null);
-        zoo.create("/servers/s", ("http://localhost:" + port).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+//        ZooKeeper zoo = new ZooKeeper(ZOOKEEPER_SERVER_URL, 2000, null);
+        String s = zoo.create("/servers/s", ("http://localhost:" + port).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
 
-        List<String> servers = zoo.getChildren("/servers", watch -> {
-            if (watch.getType() == Watcher.Event.EventType.NodeChildrenChanged) {
-                
+        watchServers();
+    }
+
+    private void watchServers() throws KeeperException, InterruptedException {
+        List<String> serverNodes = zoo.getChildren("/servers", watcher -> {
+            if (watcher.getType() == Watcher.Event.EventType.NodeChildrenChanged) {
+                try {
+                    watchServers();
+                } catch (KeeperException | InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
-        for (String s : servers) {
+
+        List<String> servers = new ArrayList<>();
+        for (String s : serverNodes) {
             byte[] data = zoo.getData("/servers/" + s, false, null);
             System.out.println("server " + s + " data=" + new String(data));
+            servers.add(new String(data));
         }
+
+        
     }
 }
