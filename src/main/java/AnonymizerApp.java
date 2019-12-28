@@ -36,7 +36,7 @@ public class AnonymizerApp {
         ActorRef configurationActor = system.actorOf(ConfigurationKeeperActor.props(), "configurationActor");
 
 
-        ZooClient server = new ZooClient(http, 8008, configurationActor);
+        HttpServer server = new HttpServer(http, configurationActor, 8008);
 
         final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = server.createRoute().flow(system, materializer);
 
