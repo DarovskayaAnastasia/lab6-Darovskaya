@@ -111,15 +111,15 @@ class HttpServer extends AllDirectives {
 
     private Http http;
     private ActorRef configurationActor;
-    private String serverUrl;
+//    private String serverUrl;
 
     public HttpServer(final Http http, ActorRef configurationActor, int port) throws KeeperException, InterruptedException, IOException {
         this.http = http;
         this.configurationActor = configurationActor;
-        serverUrl = LOCALHOST + port;
+//        serverUrl = LOCALHOST + port;
 
         ZooClient zookeeperService = new ZooClient(configurationActor);
-        zookeeperService.creaeteServer(serverUrl);
+        zookeeperService.creaeteServer(getServerUrl(port));
     }
 
     private CompletionStage<HttpResponse> fetch(String url) {
@@ -152,5 +152,9 @@ class HttpServer extends AllDirectives {
                         Pair.create("count", Integer.toString(count - 1))
                 ))
                 .toString();
+    }
+
+    private String getServerUrl(int port) {
+        return "http://localhost:" + port;
     }
 }
