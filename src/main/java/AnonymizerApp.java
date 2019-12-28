@@ -38,15 +38,14 @@ public class AnonymizerApp {
                 )
                 .toString();));
 
-        Server server = new Server(http, 8008, configurationActor);
+        Zoo server = new Zoo(http, 8008, configurationActor);
 
         final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = server.createRoute().flow(system, materializer);
 
 
-
     }
 
-    private CompletionStage<HttpResponse> fetch (String url){
+    private CompletionStage<HttpResponse> fetch(String url) {
         return http.singleRequest(HttpRequest.create(url));
     }
 
@@ -59,23 +58,25 @@ public class AnonymizerApp {
                 .toString();
     }
 }
-class Server implements Watcher {
+
+//create Node with port and watchs itself
+class Zoo implements Watcher {
     private static final String ZOOKEEPER_SERVER_URL = "127.0.0.1:2181";
 
-    private Http http;
+    //    private Http http;
     private ActorRef configurationActor;
-    private int port;
+    //    private int port;
     private ZooKeeper zoo;
 
-    public Server(final Http http, ActorRef configurationActor) throws IOException {
-        this.http = http;
-        this.configurationActor = configurationActor;
+    public Zoo(/*final Http http,*/ ActorRef configurationActor) throws IOException {
+//        this.http = http;
 
+        this.configurationActor = configurationActor;
         this.zoo = new ZooKeeper(ZOOKEEPER_SERVER_URL, 2000, null);
     }
 
-    public void creaeteServer() throws KeeperException, InterruptedException {
-        String s = zoo.create("/servers/s", ("http://localhost:" + port).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+    public void creaeteServer(String serverUrl) throws KeeperException, InterruptedException {
+        String s = zoo.create("/servers/s", serverUrl.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
     }
 
     @Override
@@ -91,8 +92,7 @@ class Server implements Watcher {
             }
 
             configurationActor.tell(new ServerListMessage(servers.toArray(new String[0])), ActorRef.noSender());
-        }
-        catch (KeeperException | InterruptedException e) {
+        } catch (KeeperException | InterruptedException e) {
             e.printStackTrace();
         }
     }
