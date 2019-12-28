@@ -1,5 +1,5 @@
 import akka.actor.AbstractActor;
-//import akka.actor.Props;
+import akka.actor.Props;
 import akka.japi.pf.ReceiveBuilder;
 
 import java.util.Random;
@@ -17,9 +17,9 @@ public class ConfigurationKeeperActor extends AbstractActor {
                 ).build();
     }
 
-//    public static Props props() {
-//        return Props.create(ConfigurationKeeperActor.class);
-//    }
+    public static Props props() {
+        return Props.create(ConfigurationKeeperActor.class);
+    }
 
     private String newServer() {
         String serverUrl = servers[new Random().nextInt(servers.length)];
