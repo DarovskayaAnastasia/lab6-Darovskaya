@@ -11,7 +11,7 @@ public class ConfigurationKeeperActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return ReceiveBuilder.create().match(ServerListMessage.class, msg -> {
-            servers = msg.getServerList();
+            this.servers = msg.getServerList();
         }).
                 match(RandomServerRequestMessage.class, msg -> sender().tell(newServer(), self())
                 ).build();
