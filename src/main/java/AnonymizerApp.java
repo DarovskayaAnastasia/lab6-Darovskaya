@@ -6,7 +6,6 @@ import akka.http.javadsl.Http;
 import akka.http.javadsl.model.HttpRequest;
 import akka.pattern.Patterns;
 import akka.stream.ActorMaterializer;
-import akka.stream.Server;
 import akka.stream.javadsl.Flow;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.Watcher;
