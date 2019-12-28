@@ -73,8 +73,7 @@ class Server extends AllDirectives {
         zookeeper.create("/servers/s", ("http://localhost:" + port).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
 
         List<String> servers = zoo.getChildren("/servers", this);
-        for (
-                String s : servers) {
+        for (String s : servers) {
             byte[] data = zoo.getData("/servers/" + s, false, null);
             System.out.println("server " + s + " data=" + new String(data
         }
