@@ -1,4 +1,5 @@
 import akka.actor.ActorSystem;
+import akka.actor.setup.ActorSystemSetup;
 import akka.http.javadsl.Http;
 import akka.http.javadsl.model.HttpRequest;
 import org.apache.zookeeper.CreateMode;
@@ -17,9 +18,10 @@ public class AnonymizerApp {
 
     public static void main(String[] args) throws IOException {
 
-        ActorSystem system = ActorSystem.create("");
-        
+        ActorSystem system = ActorSystem.create("routes", ActorSystemSetup.empty());
+
         final Http http = Http.get(context().system());
+        
         CompletionStage<HttpResponse> fetch(String url) {
             return http.singleRequest(HttpRequest.create(url));
         }
