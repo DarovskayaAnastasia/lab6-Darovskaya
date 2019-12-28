@@ -38,7 +38,7 @@ public class AnonymizerApp {
                 )
                 .toString();));
 
-        Zoo server = new Zoo(http, 8008, configurationActor);
+        ZooClient server = new ZooClient(http, 8008, configurationActor);
 
         final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = server.createRoute().flow(system, materializer);
 
@@ -59,8 +59,8 @@ public class AnonymizerApp {
     }
 }
 
-//create Node with port and watchs itself
-class Zoo implements Watcher {
+//create Node with server url and watchs itself
+class ZooClient implements Watcher {
     private static final String ZOOKEEPER_SERVER_URL = "127.0.0.1:2181";
 
     //    private Http http;
@@ -68,7 +68,7 @@ class Zoo implements Watcher {
     //    private int port;
     private ZooKeeper zoo;
 
-    public Zoo(/*final Http http,*/ ActorRef configurationActor) throws IOException {
+    public ZooClient(/*final Http http,*/ ActorRef configurationActor) throws IOException {
 //        this.http = http;
 
         this.configurationActor = configurationActor;
