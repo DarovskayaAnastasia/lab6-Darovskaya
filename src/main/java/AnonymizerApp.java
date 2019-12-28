@@ -4,6 +4,7 @@ import akka.actor.ActorSystem;
 import akka.actor.setup.ActorSystemSetup;
 import akka.http.javadsl.Http;
 import akka.http.javadsl.model.HttpRequest;
+import akka.http.javadsl.server.AllDirectives;
 import akka.pattern.Patterns;
 import akka.stream.ActorMaterializer;
 import akka.http.javadsl.ServerBinding;
@@ -61,5 +62,14 @@ public class AnonymizerApp {
 //        System.out.println("server "+s+" data="+new String(data
 
 
-class Server {
+class Server extends AllDirectives {
+    private Http http;
+    private ActorRef configurationActor;
+
+    public Server(final Http http, ActorRef configurationActor) {
+        this.http = http;
+        this.configurationActor = configurationActor;
+
+        ZooKeeperService 
+    }
 }
