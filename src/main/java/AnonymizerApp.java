@@ -108,6 +108,6 @@ class HttpServer extends AllDirectives {
         this.configurationActor = configurationActor;
 
         ZooClient zookeeperService = new ZooClient(configurationActor);
-        zookeeperService.((port));
+        zookeeperService.creaeteServer();
     }
 }
