@@ -69,5 +69,7 @@ class Server extends AllDirectives {
     public Server(final Http http, ActorRef configurationActor) {
         this.http = http;
         this.configurationActor = configurationActor;
+
+        
     }
 }
