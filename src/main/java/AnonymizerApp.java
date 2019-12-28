@@ -141,7 +141,7 @@ class HttpServer extends AllDirectives {
     }
 
     private CompletionStage<HttpResponse> redirectToServer(String url, int count) {
-        return Patterns.ask(configurationActor, new RandomServerRequestMessage(), Duration.ofMillis(2000L))
+        return Patterns.ask(configurationActor, new RandomServerRequestMessage(), Duration.ofMillis(3000))
                 .thenCompose(urlLambda -> fetch(generateUrl((String) urlLambda, url, count)));
     }
 
