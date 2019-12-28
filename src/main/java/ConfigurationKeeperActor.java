@@ -22,6 +22,8 @@ public class ConfigurationKeeperActor extends AbstractActor {
     }
 
     private String newServer() {
-        return servers[new Random().nextInt(servers.length)];
+        String serverUrl = servers[new Random().nextInt(servers.length)];
+        System.out.println("redirect to " + serverUrl);
+        return serverUrl;
     }
 }
