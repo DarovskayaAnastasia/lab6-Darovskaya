@@ -42,7 +42,7 @@ public class AnonymizerApp {
 
         ActorSystem system = ActorSystem.create("routes"/*, ActorSystemSetup.empty()*/);
 
-        final Http http = Http.get(context().system());
+        final Http http = Http.get(system);
 
         final ActorMaterializer materializer = ActorMaterializer.create(system);
         ActorRef configurationActor = system.actorOf(ConfigurationKeeperActor.props(), "configurationActor");
