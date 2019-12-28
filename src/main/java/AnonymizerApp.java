@@ -34,11 +34,8 @@ public class AnonymizerApp {
         final ActorMaterializer materializer = ActorMaterializer.create(system);
         ActorRef configurationActor = system.actorOf(ConfigurationKeeperActor.props(), "configurationActor");
 
-        Patterns.ask(configurationActor, new ConfigurationKeeperActor(), Duration.ofMillis(2000L)).thenCompose(url -> fetch(Uri.create(url)
-                .query(Query.create(
-                        Pair.create(URL_PARAM_NAME, queryUrl),
-                        Pair.create(COUNT_PARAM_NAME, Integer.toString(count - 1))
-                ))
+        Patterns.ask(configurationActor, new ConfigurationKeeperActor(), Duration.ofMillis(2000L)).thenCompose(url -> fetch(generateUrl((String) url, 
+                )
                 .toString();));
 
         Server server = new Server(http, 8008, configurationActor);
