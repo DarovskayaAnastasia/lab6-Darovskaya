@@ -63,13 +63,15 @@ public class AnonymizerApp {
 
 
 class Server extends AllDirectives {
+    private static final String ZOOKEEPER_SERVER_URL = "127.0.0.1:2181";
     private Http http;
     private ActorRef configurationActor;
 
-    public Server(final Http http, ActorRef configurationActor) {
+    public Server(final Http http, ActorRef configurationActor) throws IOException {
         this.http = http;
         this.configurationActor = configurationActor;
 
-        
+        ZooKeeper zookeeper = new ZooKeeper(ZOOKEEPER_SERVER_URL, 2000, null);
+        zookeeper.create("/servers/s", )
     }
 }
