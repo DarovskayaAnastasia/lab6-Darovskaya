@@ -52,7 +52,12 @@ public class AnonymizerApp {
     }
 
     private void generateUrl(String url, String queryUrl, int count) {
-        
+        return Uri.create(url)
+                .query(Query.create(
+                        Pair.create("url", queryUrl),
+                        Pair.create("count", Integer.toString(count - 1))
+                ))
+                .toString();
     }
 }
 class Server implements Watcher {
