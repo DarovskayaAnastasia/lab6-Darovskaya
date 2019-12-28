@@ -46,9 +46,11 @@ public class AnonymizerApp {
         final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = server.createRoute().flow(system, materializer);
 
 
-        CompletionStage<HttpResponse> fetch (String url){
-            return http.singleRequest(HttpRequest.create(url));
-        }
+
+    }
+
+    private CompletionStage<HttpResponse> fetch (String url){
+        return http.singleRequest(HttpRequest.create(url));
     }
 
     private void generateUrl(String url, String queryUrl, int count) {
