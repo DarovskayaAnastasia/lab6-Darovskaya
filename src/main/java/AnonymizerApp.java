@@ -98,4 +98,14 @@ class ZooClient implements Watcher {
     }
 }
 
-class 
+class HttpServer extends AllDirectives {
+
+    private Http http;
+    private ActorRef configurationActor;
+
+    public HttpServer(final Http http, ActorRef configurationActor, int port) {
+        this.http = http;
+        this.configurationActor = configurationActor;
+        
+    }
+}
