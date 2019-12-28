@@ -4,11 +4,14 @@ import akka.actor.ActorSystem;
 import akka.actor.setup.ActorSystemSetup;
 import akka.http.javadsl.Http;
 import akka.http.javadsl.model.HttpRequest;
+import akka.http.javadsl.model.Query;
+import akka.http.javadsl.model.Uri;
 import akka.http.javadsl.server.AllDirectives;
 import akka.pattern.Patterns;
 import akka.stream.ActorMaterializer;
 import akka.http.javadsl.ServerBinding;
 import akka.stream.javadsl.Flow;
+import jdk.internal.vm.compiler.collections.Pair;
 import org.apache.zookeeper.*;
 
 import java.io.IOException;
@@ -31,7 +34,12 @@ public class AnonymizerApp {
         final ActorMaterializer materializer = ActorMaterializer.create(system);
         ActorRef configurationActor = system.actorOf(ConfigurationKeeperActor.props(), "configurationActor");
 
-        Patterns.ask(configurationActor, new ConfigurationKeeperActor(), Duration.ofMillis(2000L)).thenCompose("" -> fetch());
+        Patterns.ask(configurationActor, new ConfigurationKeeperActor(), Duration.ofMillis(2000L)).thenCompose("" -> fetch(Uri.create(serverUrl)
+                .query(Query.create(
+                        Pair.create(URL_PARAM_NAME, queryUrl),
+                        Pair.create(COUNT_PARAM_NAME, Integer.toString(count - 1))
+                ))
+                .toString();));
 
         Server server = new Server(http, 8008, configurationActor);
 
