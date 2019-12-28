@@ -45,9 +45,6 @@ public class AnonymizerApp {
 
     }
 
-    private CompletionStage<HttpResponse> fetch(String url) {
-        return http.singleRequest(HttpRequest.create(url));
-    }
 
     private void generateUrl(String url, String queryUrl, int count) {
         return Uri.create(url)
@@ -73,6 +70,7 @@ class ZooClient implements Watcher {
 
         this.configurationActor = configurationActor;
         this.zoo = new ZooKeeper(ZOOKEEPER_SERVER_URL, 2000, null);
+
     }
 
     public void creaeteServer(String serverUrl) throws KeeperException, InterruptedException {
@@ -100,14 +98,22 @@ class ZooClient implements Watcher {
 
 class HttpServer extends AllDirectives {
 
+    private final static String  LOCALHOST = "http://localhost:";
+
     private Http http;
     private ActorRef configurationActor;
+    private String serverUrl;
 
-    public HttpServer(final Http http, ActorRef configurationActor, int port) {
+    public HttpServer(final Http http, ActorRef configurationActor, int port) throws KeeperException, InterruptedException, IOException {
         this.http = http;
         this.configurationActor = configurationActor;
+        serverUrl = LOCALHOST + port;
 
         ZooClient zookeeperService = new ZooClient(configurationActor);
-        zookeeperService.creaeteServer();
+        zookeeperService.creaeteServer(serverUrl);
+    }
+
+    private CompletionStage<HttpResponse> fetch(String url) {
+        return http.singleRequest(HttpRequest.create(url));
     }
 }
