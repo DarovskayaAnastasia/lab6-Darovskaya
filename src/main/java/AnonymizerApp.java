@@ -25,7 +25,9 @@ public class AnonymizerApp {
         final Http http = Http.get(context().system());
 
         final ActorMaterializer materializer = ActorMaterializer.create(system);
-        ActorRef
+        ActorRef configurationActor = system.actorOf(ConfigurationKeeperActor.props(), "configurationActor");
+
+        
 
         CompletionStage<HttpResponse> fetch(String url) {
             return http.singleRequest(HttpRequest.create(url));
