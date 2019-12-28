@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
-import static akka.actor.TypedActor.context;
-
 public class AnonymizerApp {
 
     public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
@@ -78,12 +76,12 @@ class ZooClient implements Watcher {
 //        this.http = http;
 
         this.configurationActor = configurationActor;
-        this.zoo = new ZooKeeper(ZOOKEEPER_SERVER_URL, 2000, null);
+        this.zoo = new ZooKeeper(ZOOKEEPER_SERVER_URL, 3000, null);
 
     }
 
-    public void creaeteServer(String serverUrl) throws KeeperException, InterruptedException {
-        String s = zoo.create("/servers/s", serverUrl.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+    public void createServer(String serverUrl) throws KeeperException, InterruptedException {
+        zoo.create("/servers/s", serverUrl.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
     }
 
     @Override
@@ -119,7 +117,7 @@ class HttpServer extends AllDirectives {
 //        serverUrl = LOCALHOST + port;
 
         ZooClient zookeeperService = new ZooClient(configurationActor);
-        zookeeperService.creaeteServer(getServerUrl(port));
+        zookeeperService.createServer(getServerUrl(port));
     }
 
     private CompletionStage<HttpResponse> fetch(String url) {
