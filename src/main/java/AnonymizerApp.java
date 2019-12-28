@@ -7,6 +7,7 @@ import akka.http.javadsl.model.HttpRequest;
 import akka.http.javadsl.model.Query;
 import akka.http.javadsl.model.Uri;
 import akka.http.javadsl.server.AllDirectives;
+import akka.http.javadsl.server.Route;
 import akka.pattern.Patterns;
 import akka.stream.ActorMaterializer;
 import akka.http.javadsl.ServerBinding;
@@ -34,9 +35,6 @@ public class AnonymizerApp {
         final ActorMaterializer materializer = ActorMaterializer.create(system);
         ActorRef configurationActor = system.actorOf(ConfigurationKeeperActor.props(), "configurationActor");
 
-        Patterns.ask(configurationActor, new ConfigurationKeeperActor(), Duration.ofMillis(2000L)).thenCompose(url -> fetch(generateUrl((String) url,
-                )
-                .toString();));
 
         ZooClient server = new ZooClient(http, 8008, configurationActor);
 
@@ -45,15 +43,6 @@ public class AnonymizerApp {
 
     }
 
-
-    private void generateUrl(String url, String queryUrl, int count) {
-        return Uri.create(url)
-                .query(Query.create(
-                        Pair.create("url", queryUrl),
-                        Pair.create("count", Integer.toString(count - 1))
-                ))
-                .toString();
-    }
 }
 
 //create Node with server url and watchs itself
@@ -98,7 +87,7 @@ class ZooClient implements Watcher {
 
 class HttpServer extends AllDirectives {
 
-    private final static String  LOCALHOST = "http://localhost:";
+    private final static String LOCALHOST = "http://localhost:";
 
     private Http http;
     private ActorRef configurationActor;
@@ -115,5 +104,33 @@ class HttpServer extends AllDirectives {
 
     private CompletionStage<HttpResponse> fetch(String url) {
         return http.singleRequest(HttpRequest.create(url));
+    }
+
+    public Route createRoute() {
+        return get(() ->
+                parameter("url", url ->
+                        parameter("count", count -> {
+                            int count = Integer.parseInt(count);
+
+                            return count == 0 ?
+                                    completeWithFuture(fetch(url)) :
+                                    completeWithFuture(redirectToServer(url, count));
+                        })
+                )
+        );
+    }
+
+    private CompletionStage<HttpResponse> redirectToServer(String url, int count) {
+        return Patterns.ask(configurationActor, new ConfigurationKeeperActor(), Duration.ofMillis(2000L))
+                .thenCompose(urlLambda -> fetch(generateUrl((String) urlLambda, url, count)));
+    }
+
+    private String generateUrl(String url, String queryUrl, int count) {
+        return Uri.create(url)
+                .query(Query.create(
+                        Pair.create("url", queryUrl),
+                        Pair.create("count", Integer.toString(count - 1))
+                ))
+                .toString();
     }
 }
