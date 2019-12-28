@@ -1,2 +1,2 @@
-public class ConfigurationKeeper {
+public class ConfigurationKeeperActor {
 }
