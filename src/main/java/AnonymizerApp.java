@@ -1,11 +1,17 @@
 import akka.actor.ActorSystem;
+import akka.http.javadsl.Http;
+import akka.http.javadsl.model.HttpRequest;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 
 import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.concurrent.CompletionStage;
+
+import static akka.actor.TypedActor.context;
 
 public class AnonymizerApp {
 
@@ -13,6 +19,10 @@ public class AnonymizerApp {
 
         ActorSystem system = ActorSystem.create("");
         
+        final Http http = Http.get(context().system());
+        CompletionStage<HttpResponse> fetch(String url) {
+            return http.singleRequest(HttpRequest.create(url));
+        }
     }
 }
 
