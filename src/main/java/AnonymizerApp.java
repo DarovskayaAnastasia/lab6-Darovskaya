@@ -34,7 +34,7 @@ public class AnonymizerApp {
         final ActorMaterializer materializer = ActorMaterializer.create(system);
         ActorRef configurationActor = system.actorOf(ConfigurationKeeperActor.props(), "configurationActor");
 
-        Patterns.ask(configurationActor, new ConfigurationKeeperActor(), Duration.ofMillis(2000L)).thenCompose(url -> fetch(Uri.create("http://localhost:" + port)
+        Patterns.ask(configurationActor, new ConfigurationKeeperActor(), Duration.ofMillis(2000L)).thenCompose(url -> fetch(Uri.create(url)
                 .query(Query.create(
                         Pair.create(URL_PARAM_NAME, queryUrl),
                         Pair.create(COUNT_PARAM_NAME, Integer.toString(count - 1))
@@ -50,24 +50,11 @@ public class AnonymizerApp {
             return http.singleRequest(HttpRequest.create(url));
         }
     }
+
+    private void generateUrl(String url, String queryUrl, int count) {
+        
+    }
 }
-
-//
-//    ZooKeeper(String connectString,
-//              int sessionTimeout,
-//              Watcher watcher)
-//
-//    ZooKeeper zoo = new ZooKeeper("1MB27.0.0.1MB:21MB81MB", 3000, this);
-//zoo.create("/servers/s","data".getBytes(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL_SEQUENTIAL);
-//        List<String> servers=zoo.getChildren("/servers",this);
-//        for(
-//        String s:servers)
-//
-//        {
-//        byte[]data=zoo.getData("/servers/"+s,false,null);
-//        System.out.println("server "+s+" data="+new String(data
-
-
 class Server implements Watcher {
     private static final String ZOOKEEPER_SERVER_URL = "127.0.0.1:2181";
 
