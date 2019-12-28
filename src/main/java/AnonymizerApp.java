@@ -6,6 +6,7 @@ import akka.http.javadsl.Http;
 import akka.http.javadsl.model.HttpRequest;
 import akka.pattern.Patterns;
 import akka.stream.ActorMaterializer;
+import akka.http.javadsl.ServerBinding;
 import akka.stream.javadsl.Flow;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.Watcher;
@@ -38,23 +39,27 @@ public class AnonymizerApp {
         final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = server.createRoute().flow(system, materializer);
 
 
-        CompletionStage<HttpResponse> fetch(String url) {
+        CompletionStage<HttpResponse> fetch (String url){
             return http.singleRequest(HttpRequest.create(url));
         }
     }
 }
 
-    ZooKeeper(String connectString,
-              int sessionTimeout,
-              Watcher watcher)
+//
+//    ZooKeeper(String connectString,
+//              int sessionTimeout,
+//              Watcher watcher)
+//
+//    ZooKeeper zoo = new ZooKeeper("1MB27.0.0.1MB:21MB81MB", 3000, this);
+//zoo.create("/servers/s","data".getBytes(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL_SEQUENTIAL);
+//        List<String> servers=zoo.getChildren("/servers",this);
+//        for(
+//        String s:servers)
+//
+//        {
+//        byte[]data=zoo.getData("/servers/"+s,false,null);
+//        System.out.println("server "+s+" data="+new String(data
 
-    ZooKeeper zoo = new ZooKeeper("1MB27.0.0.1MB:21MB81MB",3000,this);
-zoo.create("/servers/s", "data".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE ,CreateMode.EPHEMERAL_SEQUENTIAL);
-    List<String> servers = zoo.getChildren("/servers", this);
-for(
-    String s :servers)
 
-    {
-        byte[] data = zoo.getData("/servers/" + s, false, null);
-        System.out.println("server " + s + " data=" + new String(data
+class Server {
 }
